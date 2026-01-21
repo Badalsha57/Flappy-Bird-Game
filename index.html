@@ -11,59 +11,16 @@
     <meta name="apple-mobile-web-app-title" content="Flappy Sparrow">
     
     <style>
-        body { 
-            margin: 0; 
-            padding: 0;
-            overflow: hidden; 
-            background: #1a1a1a; 
-            font-family: 'Segoe UI', sans-serif; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            width: 100vw; 
-            touch-action: manipulation;
-        }
-
-        #game-container { 
-            position: relative; 
-            width: 100%; 
-            height: 100%; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        canvas { 
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; 
-            background-color: #70c5ce; 
-            cursor: pointer; 
-            display: block;
-            border: 2px solid #fff; 
-            border-radius: 8px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
+        body { margin: 0; overflow: hidden; background: #1a1a1a; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; touch-action: manipulation; }
+        #game-container { position: relative; width: 360px; height: 580px; }
+        canvas { border: 4px solid #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-color: #70c5ce; cursor: pointer; display: block; }
         
         /* Controls Styling */
         .top-controls { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; z-index: 100; }
-        .control-btn { background: rgba(0,0,0,0.6); color: white; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; pointer-events: auto; }
+        .control-btn { background: rgba(0,0,0,0.6); color: white; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .control-btn:active { transform: scale(0.9); }
         
-        #ui { 
-            position: absolute; 
-            inset: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-direction: column; 
-            color: white; 
-            text-shadow: 2px 2px 5px #000; 
-            z-index: 10; 
-            pointer-events: none; 
-        }
-
+        #ui { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; text-shadow: 2px 2px 5px #000; z-index: 10; pointer-events: none; }
         #msg-box { background: rgba(0,0,0,0.9); padding: 25px; border-radius: 15px; border: 2px solid #fff; pointer-events: auto; text-align: center; min-width: 240px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
         .creator-tag { color: #f1c40f; font-weight: bold; font-size: 0.9rem; margin-top: 5px; letter-spacing: 2px; }
@@ -136,6 +93,7 @@
         const highscoreEl = document.getElementById("highScore");
         const muteBtn = document.getElementById("muteBtn");
 
+        // --- Audio Setup ---
         const bgMusic = new Audio('https://assets.mixkit.co/music/preview/mixkit-sun-and-clouds-585.mp3');
         bgMusic.loop = true;
         bgMusic.volume = 0.3;
@@ -148,8 +106,10 @@
 
         function toggleMute() {
             isMuted = !isMuted;
-            bgMusic.muted = isMuted; jumpSound.muted = isMuted;
-            scoreSound.muted = isMuted; crashSound.muted = isMuted;
+            bgMusic.muted = isMuted;
+            jumpSound.muted = isMuted;
+            scoreSound.muted = isMuted;
+            crashSound.muted = isMuted;
             muteBtn.innerText = isMuted ? "🔇" : "🔊";
         }
 
@@ -170,8 +130,12 @@
         for(let i=0; i<5; i++) clouds.push({x: Math.random()*canvas.width, y: Math.random()*200, speed: 0.2+Math.random()*0.4, size: 25+Math.random()*20});
 
         function startGame(lvl) {
-            if (lvl) { currentLevel = lvl; currentSettings = levels[lvl]; }
+            if (lvl) {
+                currentLevel = lvl;
+                currentSettings = levels[lvl];
+            }
             if(!isMuted) bgMusic.play().catch(()=>{});
+            
             birdY = 250; velocity = 0; score = 0; pipes = []; frames = 0;
             scoreEl.innerText = "0";
             gameRunning = true;
@@ -191,9 +155,13 @@
         function handleInput(e) {
             if (e.target.closest('.top-controls') || e.target.tagName === 'BUTTON') return;
             if (e.type === "touchstart") e.preventDefault();
+            
             if (gameRunning) {
                 velocity = currentSettings.jump;
-                if(!isMuted) { jumpSound.currentTime = 0; jumpSound.play().catch(()=>{}); }
+                if(!isMuted) {
+                    jumpSound.currentTime = 0;
+                    jumpSound.play().catch(()=>{});
+                }
             }
         }
 
@@ -217,7 +185,9 @@
         function drawPipes() {
             for (let p of pipes) {
                 let pipeGrad = ctx.createLinearGradient(p.x, 0, p.x + 50, 0);
-                pipeGrad.addColorStop(0, "#2c3e50"); pipeGrad.addColorStop(0.5, "#95a5a6"); pipeGrad.addColorStop(1, "#2c3e50");
+                pipeGrad.addColorStop(0, "#2c3e50");
+                pipeGrad.addColorStop(0.5, "#95a5a6");
+                pipeGrad.addColorStop(1, "#2c3e50");
                 ctx.fillStyle = pipeGrad;
                 ctx.fillRect(p.x, 0, 50, p.top);
                 ctx.fillRect(p.x, p.top + currentSettings.gap, 50, canvas.height);
@@ -245,8 +215,12 @@
                     if (birdY + 5 < pipes[i].top || birdY + 25 > pipes[i].top + currentSettings.gap) gameOver();
                 }
                 if (pipes[i].x + currentSettings.speed >= birdX && pipes[i].x < birdX) {
-                    score++; scoreEl.innerText = score;
-                    if(!isMuted) { scoreSound.currentTime = 0; scoreSound.play().catch(()=>{}); }
+                    score++; 
+                    scoreEl.innerText = score;
+                    if(!isMuted) {
+                        scoreSound.currentTime = 0;
+                        scoreSound.play().catch(()=>{});
+                    }
                 }
                 if (pipes[i].x + 50 < 0) pipes.splice(i, 1);
             }
