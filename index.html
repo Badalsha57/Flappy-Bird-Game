@@ -11,9 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="Flappy Sparrow">
     
     <style>
-        body { margin: 0; overflow: hidden; background: #1a1a1a; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; touch-action: manipulation; }
-        #game-container { position: relative; width: 360px; height: 580px; }
-        canvas { border: 4px solid #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-color: #70c5ce; cursor: pointer; display: block; }
+        body { margin: 0; overflow: hidden; background: #1a1a1a; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; touch-action: manipulation; }
+        #game-container { position: relative; width: 100vw; height: 100vh; }
+        canvas { border: none; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-color: #70c5ce; cursor: pointer; display: block; }
         
         /* Controls Styling */
         .top-controls { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; z-index: 100; }
@@ -262,4 +262,5 @@
         loop();
     </script>
 </body>
+
 </html>
